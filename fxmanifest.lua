@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
-author 'v0'
+author 'Merodicoexe (AI v0.dev)'
 description 'Community Service Script with Database Support'
 version '2.0.0'
 
