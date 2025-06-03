@@ -5,7 +5,7 @@ local Framework = nil
 Citizen.CreateThread(function()
     if Config.Framework == 'ESX' then
         while ESX == nil do
-            TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+            ESX = exports['es_extended']:getSharedObject()
             Citizen.Wait(100)
         end
         Framework = ESX
