@@ -3,7 +3,7 @@ game 'gta5'
 lua54 'yes'
 author 'Merodicoexe (AI v0.dev)'
 description 'Community Service Script with Database Support'
-version '2.0.0'
+version '2.1'
 
 shared_scripts {
     '@ox_lib/init.lua',
