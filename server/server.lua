@@ -750,6 +750,8 @@ if Config.Framework == 'QB' or Config.Framework == 'QBX' then
     end)
 end
 
+--[[
+-- Old Part Script Deleted to Crashing server
 -- Fallback for servers without framework
 AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
     local playerId = source
@@ -795,6 +797,7 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
         deferrals.done()
     end)
 end)
+--]]
 
 -- Command to check database status and active VPP
 RegisterCommand("vppstatus", function(source, args, rawCommand)
