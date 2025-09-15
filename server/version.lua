@@ -1,6 +1,6 @@
 local resourceName = GetCurrentResourceName()
 local currentVersion = GetResourceMetadata(resourceName, 'version', 0)
-local versionURL = "https://raw.githubusercontent.com/TVOJE_GITHUB_REPO/main/version.txt" -- tady dej URL, kde máš uložený číslo verze
+local versionURL = "https://raw.githubusercontent.com/Merodicoexe/version-checker/refs/heads/main/sg_vpp.txt" -- tady dej URL, kde máš uložený číslo verze
 
 CreateThread(function()
     Wait(2000) -- malá prodleva po startu
