@@ -61,6 +61,14 @@ end
 function HasPermission(source, permission)
     if source == 0 then return true end
     
+    -- Check job-based permissions if Config.Jobs is enabled
+    if Config.Jobs and Config.Jobs.Enable then
+        local playerJob = GetPlayerJob(source)
+        if playerJob and IsJobAllowed(playerJob) then
+            return true
+        end
+    end
+    
     -- Check ACE permission
     if IsPlayerAceAllowed(source, permission or Config.Admin.acePermission) then
         return true
@@ -74,6 +82,34 @@ function HasPermission(source, permission)
     end
     
     DebugPrint(string.format("Permission denied for player %s", GetPlayerName(source) or "Unknown"), "PERMS")
+    return false
+end
+
+-- Function to get player job
+function GetPlayerJob(source)
+    local fwPlayer = GetFrameworkPlayer(source)
+    
+    if fwPlayer then
+        if Config.Framework == 'ESX' then
+            return fwPlayer.job and fwPlayer.job.name or nil
+        elseif Config.Framework == 'QB' or Config.Framework == 'QBX' then
+            return fwPlayer.PlayerData.job and fwPlayer.PlayerData.job.name or nil
+        end
+    end
+    
+    return nil
+end
+
+-- Function to check if job is allowed
+function IsJobAllowed(jobName)
+    if not Config.Jobs or not Config.Jobs.Jobs then return false end
+    
+    for _, allowedJob in ipairs(Config.Jobs.Jobs) do
+        if jobName == allowedJob then
+            return true
+        end
+    end
+    
     return false
 end
 
