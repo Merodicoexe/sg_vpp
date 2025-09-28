@@ -627,3 +627,133 @@ function GetTaskTypeConfig(taskType)
     end
     return Config.Tasks.types[taskType]
 end
+
+-- Function to create VPP NPC and interaction
+function CreateVPPNPC()
+    if not Config.Jobs or not Config.Jobs.Enable then return end
+    
+    local coords = Config.Jobs.Coords
+    if not coords or (coords.x == 0 and coords.y == 0 and coords.z == 0) then
+        DebugPrint("Invalid NPC coordinates in Config.Jobs", "CLIENT")
+        return
+    end
+    
+    -- Request NPC model
+    local npcModel = GetHashKey(Config.Jobs.npc)
+    RequestModel(npcModel)
+    
+    local timeout = 0
+    while not HasModelLoaded(npcModel) and timeout < 50 do
+        Citizen.Wait(100)
+        timeout = timeout + 1
+    end
+    
+    if timeout >= 50 then
+        DebugPrint("Failed to load NPC model: " .. Config.Jobs.npc, "CLIENT")
+        return
+    end
+    
+    -- Create NPC
+    local npc = CreatePed(4, npcModel, coords.x, coords.y, coords.z, 0.0, false, true)
+    SetEntityHeading(npc, 0.0)
+    FreezeEntityPosition(npc, true)
+    SetEntityInvincible(npc, true)
+    SetBlockingOfNonTemporaryEvents(npc, true)
+    
+    -- Setup interaction based on Config.Jobs.Target
+    if Config.Jobs.Target then
+        -- ox_target interaction
+        if GetResourceState('ox_target') == 'started' then
+            exports.ox_target:addLocalEntity(npc, {
+                {
+                    name = 'vpp_npc',
+                    icon = 'fas fa-gavel',
+                    label = 'VPP Menu',
+                    onSelect = function()
+                        if HasJobPermission() then
+                            ShowVPPAdminMenu()
+                        else
+                            lib.notify({
+                                title = 'VPP',
+                                description = 'Nemáš oprávnění k použití tohoto menu.',
+                                type = 'error'
+                            })
+                        end
+                    end
+                }
+            })
+        end
+    else
+        -- 3D text interaction
+        Citizen.CreateThread(function()
+            while DoesEntityExist(npc) do
+                Citizen.Wait(0)
+                
+                local playerCoords = GetEntityCoords(PlayerPedId())
+                local npcCoords = GetEntityCoords(npc)
+                local distance = #(playerCoords - npcCoords)
+                
+                if distance < 2.0 then
+                    DrawTextOnScreen("Stiskni ~g~E~w~ pro VPP Menu", 0.5, 0.95, 0.6, {r = 255, g = 255, b = 255, a = 255})
+                    
+                    if IsControlJustReleased(0, 38) then -- E key
+                        if HasJobPermission() then
+                            ShowVPPAdminMenu()
+                        else
+                            lib.notify({
+                                title = 'VPP',
+                                description = 'Nemáš oprávnění k použití tohoto menu.',
+                                type = 'error'
+                            })
+                        end
+                    end
+                end
+            end
+        end)
+    end
+    
+    DebugPrint("VPP NPC created successfully", "CLIENT")
+end
+
+-- Function to check if player has job permission
+function HasJobPermission()
+    if not Config.Jobs or not Config.Jobs.Enable then return false end
+    
+    -- Get player job from framework
+    local playerJob = GetPlayerJobClient()
+    
+    if not playerJob then return false end
+    
+    -- Check if job is in allowed list
+    for _, allowedJob in ipairs(Config.Jobs.Jobs) do
+        if playerJob == allowedJob then
+            return true
+        end
+    end
+    
+    return false
+end
+
+-- Function to get player job on client side
+function GetPlayerJobClient()
+    if Config.Framework == 'ESX' then
+        if ESX and ESX.PlayerData and ESX.PlayerData.job then
+            return ESX.PlayerData.job.name
+        end
+    elseif Config.Framework == 'QB' or Config.Framework == 'QBX' then
+        if QBCore and QBCore.Functions.GetPlayerData then
+            local PlayerData = QBCore.Functions.GetPlayerData()
+            if PlayerData and PlayerData.job then
+                return PlayerData.job.name
+            end
+        end
+    end
+    
+    return nil
+end
+
+-- Initialize VPP NPC when resource starts
+Citizen.CreateThread(function()
+    Citizen.Wait(2000) -- Wait for everything to load
+    CreateVPPNPC()
+end)
