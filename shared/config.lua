@@ -137,6 +137,15 @@ Config.Admin = {
     logActions = true
 }
 
+-- Jobs Configuration for police/sheriff access
+Config.Jobs = {
+    Enable = true,
+    Target = true, -- = true = ox_target , false = 3d text
+    Jobs = {'police','sheriff'},
+    Coords = vec(0,0,0),
+    npc = 's_m_m_prisguard_01'
+}
+
 -- UI Configuration
 Config.UI = {
     textScale = 0.6,
