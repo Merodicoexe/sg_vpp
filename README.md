@@ -1,18 +1,25 @@
-# sg_vpp
+SG_VPP
 
-**sg_vpp** je veřejný skript vytvořený pro platformu FiveM, který je napsán v jazyce Lua. Projekt je rozdělen do tří hlavních složek: `client`, `server` a `shared`, což naznačuje modulární strukturu typickou pro vývoj skriptů ve FiveM.
+Modulární FiveM skript pro VPP / Community Service.
 
-## 📁 Struktura projektu
-
-- **client/**: Obsahuje klientské skripty, které běží na straně hráče.
-- **server/**: Obsahuje serverové skripty, které běží na straně serveru.
-- **shared/**: Obsahuje sdílené skripty a konfigurace, které jsou společné pro klienta i server.
-- **fxmanifest.lua**: Definuje metadata a závislosti pro FiveM.
-- **LICENSE**: Projekt je licencován pod licencí Apache 2.0.
-- **README.md**: Tento soubor s informacemi o projektu.
-
-## ⚙️ Instalace
-
-1. Naklonuj repozitář do složky `resources` ve tvém FiveM serveru:
-   ```bash
+Instalace:
+1. Naklonuj do resources:
    git clone https://github.com/Merodicoexe/sg_vpp.git
+2. Přidej do server.cfg:
+   ensure sg_vpp
+3. Restartuj server nebo spusť:
+   refresh
+   start sg_vpp
+
+Konfigurace:
+- shared/config.lua – zde nastavíš parametry skriptu (např. Pozice, Jobs, Groups).
+
+Příkazy :
+- /vppadmin – otevře menu pro hráče
+
+
+Licence:
+- Apache 2.0
+
+Kontakt:
+- GitHub issues nebo kontakt přes repozitář
